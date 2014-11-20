@@ -58,7 +58,10 @@ module.exports = function(grunt) {
             if(progressing) return;
             progressing = true;
             if(msg){
-                if(logState!==undefined) grunt.log.write("\r");
+                if(logState!==undefined) {
+                    grunt.log.write("\r                                                                                                                        ");
+                    grunt.log.write("\r");
+                }
                 grunt.log.writeln(msg);
                 logState = undefined;
             }
@@ -68,13 +71,14 @@ module.exports = function(grunt) {
                 if(logState>3) logState = 0;
             }
 
+            grunt.log.write("\r                                                                                                                        ");
             grunt.log.write("\r");
             grunt.log.write(chalk.magenta((logState ? logStateChar[logState] : "|")));
             percentage = Math.round( (new Date() - buildStartTime)/estimatedDuration*100);
             if(percentage>0) {
                 grunt.log.write(chalk[percentage > 100 ? "red" : "cyan"](" " + percentage + "%"));
                 if(percentage > 120){
-                    grunt.log.write(chalk.bgRed(" Build is taking longer than estimated... it might be stuck, please check status in jenkins."));
+                    grunt.log.write(chalk.black(chalk.bgRed(" Build is taking longer than estimated... it might be stuck, please check status in jenkins.")));
                 }
             }
 
@@ -143,7 +147,9 @@ module.exports = function(grunt) {
                         pollLog(build, function() {
                             progressing = true;
                             progressInterval = setTimeout(progress,100);
-                            grunt.log.writeln(chalk[build.result==="SUCCESS"?'green':'red']("\rBuild finished, result= " + build.result ));
+                            grunt.log.write("\r                                                                                                                        ");
+                            grunt.log.write("\r");
+                            grunt.log.writeln(chalk[build.result==="SUCCESS"?'green':'red']("Build finished, result= " + build.result ));
                             grunt.log.writeln(chalk.cyan("Build can be viewed at:"));
                             grunt.log.writeln(chalk.blue(build.url));
                             done();
