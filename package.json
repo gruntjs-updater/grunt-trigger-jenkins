@@ -1,7 +1,7 @@
 {
   "name": "grunt-trigger-jenkins",
   "description": "Trigger Jenkins job and poll for compleation",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "Gruntfile.js",
   "engines": {
     "node": ">= 0.8.0"
@@ -9,7 +9,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "devDependencies": {
+  "dependencies": {
     "grunt": "^0.4.1",
     "request": "~2.40.0",
     "chalk": "^0.5.1"
@@ -25,6 +25,6 @@
     "type": "git",
     "url": "https://github.com/capriza/grunt-trigger-jenkins"
   },
-  "_id": "grunt-trigger-jenkins@0.1.0",
+  "_id": "grunt-trigger-jenkins@0.1.1",
   "readme": "README.md"
 }
