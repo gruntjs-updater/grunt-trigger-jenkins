@@ -1,7 +1,7 @@
 {
   "name": "grunt-trigger-jenkins",
-  "description": "Trigger Jenkins job and poll for compleation",
-  "version": "0.1.1",
+  "description": "Trigger Jenkins job and poll for completion",
+  "version": "0.1.4",
   "main": "Gruntfile.js",
   "engines": {
     "node": ">= 0.8.0"
@@ -25,6 +25,6 @@
     "type": "git",
     "url": "https://github.com/capriza/grunt-trigger-jenkins"
   },
-  "_id": "grunt-trigger-jenkins@0.1.1",
+  "_id": "grunt-trigger-jenkins@0.1.4",
   "readme": "README.md"
 }

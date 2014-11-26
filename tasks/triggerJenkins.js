@@ -48,7 +48,7 @@ module.exports = function(grunt) {
         //trigger jenkins job
         request(triggerOptions , function(error, response, body) {
             //Start polling
-            grunt.log.writeln(chalk.cyan("Polling jenkins..."));
+            grunt.log.writeln(chalk.cyan("Triggered jenkins job, Polling jenkins for status..."));
             pollStatus();
         });
 
@@ -59,7 +59,7 @@ module.exports = function(grunt) {
             progressing = true;
             if(msg){
                 if(logState!==undefined) {
-                    grunt.log.write("\r                                                                                                                        ");
+                    grunt.log.write("\r                                 ");
                     grunt.log.write("\r");
                 }
                 grunt.log.writeln(msg);
@@ -71,14 +71,14 @@ module.exports = function(grunt) {
                 if(logState>3) logState = 0;
             }
 
-            grunt.log.write("\r                                                                                                                        ");
+            grunt.log.write("\r                                 ");
             grunt.log.write("\r");
             grunt.log.write(chalk.magenta((logState ? logStateChar[logState] : "|")));
             percentage = Math.round( (new Date() - buildStartTime)/estimatedDuration*100);
             if(percentage>0) {
                 grunt.log.write(chalk[percentage > 100 ? "red" : "cyan"](" " + percentage + "%"));
                 if(percentage > 120){
-                    grunt.log.write(chalk.black(chalk.bgRed(" Build is taking longer than estimated... it might be stuck, please check status in jenkins.")));
+                    grunt.log.write(chalk.black(chalk.bgRed(" Build exceeds time estimation and might be stuck.")));
                 }
             }
 
@@ -107,6 +107,7 @@ module.exports = function(grunt) {
             });
         }
 
+        var retries = 0, maxRetries=10;
         function pollStatus() {
             request(pollOptions, function(error, response, body) {
                 body = JSON.parse(body);
@@ -125,8 +126,17 @@ module.exports = function(grunt) {
                             grunt.log.writeln(chalk.cyan("[" + new Date() + "] Build is not running yet, polling..."));
                             setTimeout(pollStatus, 200);
                         } else {
-                            grunt.log.error(chalk.red("Failed to queue build"));
-                            done(false);
+                            retries++;
+                            if (retries <= maxRetries){
+                                grunt.log.writeln(chalk.cyan("[" + new Date() + "] Failed to get build status, retrying..."));
+                                setTimeout(pollStatus, 2000);
+                            }
+                            else {
+                                grunt.log.error(chalk.red("Failed to queue build"));
+                                grunt.log.warn(JSON.stringify(body));
+                                grunt.log.warn("SIGNATURE ->" + options.sig);
+                                done(false);
+                            }
                         }
                     } else {
                         if(!buildStartTime) {
@@ -147,7 +157,7 @@ module.exports = function(grunt) {
                         pollLog(build, function() {
                             progressing = true;
                             progressInterval = setTimeout(progress,100);
-                            grunt.log.write("\r                                                                                                                        ");
+                            grunt.log.write("\r                                 ");
                             grunt.log.write("\r");
                             grunt.log.writeln(chalk[build.result==="SUCCESS"?'green':'red']("Build finished, result= " + build.result ));
                             grunt.log.writeln(chalk.cyan("Build can be viewed at:"));
